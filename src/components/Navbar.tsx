@@ -35,8 +35,8 @@ const Navbar = () => {
   };
 
   return (
-    <Header className="bg-white px-4 flex justify-between items-center m-3 sticky">
-      <div className="font-bold text-gray-800 flex items-center gap-4">
+    <Header className="bg-white px-4 flex justify-between items-center absolute w-full">
+      <div className="font-bold text-gray-800 flex items-center gap-4 m-3 w-full">
         <Link to="/">TMBD</Link>
         <Breadcrumb
           items={menuItems.map((item) => ({
@@ -64,61 +64,6 @@ const Navbar = () => {
 export default Navbar;
 export const menuItems: BreadcrumbsItem[] = [
   { title: "Home", path: "/" },
-  { title: "MovieCard", path: "/movie-card" },
   { title: "MovieList", path: "/movie-list" },
   { title: "PersonList", path: "/person-list" },
 ];
-
-// import { useContext } from "react";
-// import { Link, useNavigate } from "react-router-dom";
-// import { UserContext } from "../context/context";
-// import { Layout, Menu, Button } from "antd";
-
-// const { Header } = Layout;
-
-// const Navbar = () => {
-//   const { isLoggedIn, setUser, setIsLoggedIn,setToken } = useContext(UserContext);
-//   const navigate = useNavigate();
-
-//   const handleLogout = () => {
-//     localStorage.clear
-//     setToken("")
-//     setUser(null);
-//     setIsLoggedIn(false);
-//     navigate("/");
-//   };
-//   const menuItems = [
-//     { key: "home", label: <Link to="/">Home</Link> },
-//     { key: "movie-card", label: <Link to="/movie-card">Movie Card</Link> },
-//     { key: "movie-list", label: <Link to="/movie-list">Movie List</Link> },
-//   ];
-
-//   return (
-//     <Header className="bg-white px-4 flex justify-between items-center mx-2 sticky">
-//       <div className="font-bold text-gray-800">
-//         <Link to="/">MovieApp</Link>
-//       </div>
-
-//       <Menu
-//         mode="horizontal"
-//         selectable={false}
-//         className="flex-1 justify-start ml-8 h-16 items-center"
-//         items={menuItems}
-//       />
-
-//       <div>
-//         {!isLoggedIn ? (
-//           <Button type="primary">
-//             <Link to="/login">Login</Link>
-//           </Button>
-//         ) : (
-//           <Button type="primary" danger onClick={handleLogout}>
-//             Logout
-//           </Button>
-//         )}
-//       </div>
-//     </Header>
-//   );
-// };
-
-// export default Navbar;

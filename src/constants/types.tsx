@@ -47,7 +47,6 @@ export type FilterProps = {
 };
 
 export type FilterInput = {
-  limit?: number;
   field?: string;
   order?: string;
   skip?: number;
@@ -57,6 +56,8 @@ export type LoginProps = {
   formData: User;
   setFormData: React.Dispatch<React.SetStateAction<User>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  error: Error | undefined
+  loading:boolean
 };
 
 export type MovieListResponse = {

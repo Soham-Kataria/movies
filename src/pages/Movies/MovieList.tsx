@@ -1,8 +1,7 @@
 import { useEffect, useState } from "react";
-import { useLazyQuery, useQuery } from "@apollo/client/react";
+import { useQuery } from "@apollo/client/react";
 import { Button, Spin } from "antd";
 import InfiniteScroll from "react-infinite-scroll-component";
-
 import { QueryMovies } from "../../backend/QueryMovie";
 import MovieCard from "../../components/Movies/MovieCard";
 import Filter from "../../components/Movies/Filter";
@@ -19,7 +18,7 @@ const PAGE_SIZE = 10;
 
 const MovieList = () => {
   const [input, setInput] = useState<FilterInput>({
-    field: "releaseDate",
+    field: "createdAt",
     order: "DESC",
   });
 
@@ -28,21 +27,23 @@ const MovieList = () => {
   const [searchInput, setSearchInput] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data, error, fetchMore } = useQuery<MoviesQueryResult>(QueryMovies, {
-    variables: {
-      filter: {
-        skip: 0,
-        limit: PAGE_SIZE,
+  const { data, loading, error, fetchMore } = useQuery<MoviesQueryResult>(
+    QueryMovies,
+    {
+      variables: {
+        filter: {
+          skip: 0,
+          limit: PAGE_SIZE,
+        },
+        sort: {
+          field: input.field,
+          order: input.order,
+        },
       },
-      sort: {
-        field: input.field,
-        order: input.order,
-      },
-    },
-    notifyOnNetworkStatusChange: true,
-  });
+      notifyOnNetworkStatusChange: true,
+    }
+  );
 
-  /* ---------------- LOAD MORE ---------------- */
   const loadMore = async () => {
     const currentLength = data?.movies.data.length;
 
@@ -118,46 +119,24 @@ const MovieList = () => {
     setIsFilterDiv(false);
   };
 
-  const [fetchAll, { data: allMovies, loading }] =
-    useLazyQuery<MoviesQueryResult>(QueryMovies);
-  useEffect(() => {
-    fetchAll({
-      variables: {
-        filter: { limit: 100 },
-        sort: {
-          field: input.field,
-          order: input.order,
-        },
-      },
-    });
-  }, []);
-
   const filteredMovies = searchQuery
-    ? allMovies?.movies.data.filter((m) =>
+    ? data?.movies.data.filter((m) =>
         m.title?.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : data?.movies.data;
-  // const filteredMovies = searchQuery
-  //   ? data?.movies.data.filter((m) =>
-  //       m.title?.toLowerCase().includes(searchQuery.toLowerCase())
-  //     )
-  //   : data?.movies.data;
-
   if (error) {
     return <p className="text-red-500">{error.message}</p>;
   }
 
-
   return (
-    <>
+    <div>
       <div className="p-2 mx-2">
-                <Breadcrumbs
+        <Breadcrumbs
           items={[
             { title: "Home", path: "/" },
             { title: "Movie List", path: "/movie-list" },
           ]}
         />
-
       </div>
       <div className="mx-auto max-w-7xl flex flex-col gap-6 mb-4">
         <div className="flex justify-between items-center">
@@ -168,11 +147,9 @@ const MovieList = () => {
               placeholder="Search movie by title"
               value={searchInput}
               onChange={(e) => setSearchInput(e.target.value)}
-              // onSearch={applyQuery}
               label={"Movie"}
             />
 
-            {/* Filter Button + Dropdown */}
             <div className="relative">
               <Button
                 color="cyan"
@@ -194,34 +171,35 @@ const MovieList = () => {
             </div>
           </div>
         </div>
-
-        <InfiniteScroll
-          dataLength={filteredMovies?.length ?? 0}
-          next={loadMore}
-          hasMore={hasMore}
-          loader={
-            loading && (
-              <div className="flex justify-center p-4">
-                <Spin />
-              </div>
-            )
-          }
-          endMessage={
-            <p className="text-center text-gray-500 mt-4">
-              🎉 All movies loaded
-            </p>
-          }
-        >
-          <ul className="mt-4 flex flex-col gap-4">
-            {filteredMovies?.map((movie: Movie) => (
-              <li key={movie.id}>
-                <MovieCard id={movie.id} />
-              </li>
-            ))}
-          </ul>
-        </InfiniteScroll>
+        <div className="overflow-y:auto">
+          <InfiniteScroll
+            dataLength={filteredMovies?.length ?? 0}
+            next={loadMore}
+            hasMore={hasMore}
+            loader={
+              loading && (
+                <div className="flex justify-center p-4">
+                  <Spin />
+                </div>
+              )
+            }
+            endMessage={
+              <p className="text-center text-gray-500 mt-4">
+                🎉 All movies loaded
+              </p>
+            }
+          >
+            <ul className="mt-4 grid grid-cols-5 gap-4">
+              {filteredMovies?.map((movie: Movie) => (
+                <li key={movie.id}>
+                  <MovieCard id={movie.id} />
+                </li>
+              ))}
+            </ul>
+          </InfiniteScroll>
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 

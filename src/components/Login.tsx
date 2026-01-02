@@ -1,7 +1,13 @@
 import { Button, Form, Input } from "antd";
 import type { LoginProps } from "../constants/types";
 
-const LoginComp = ({ formData, setFormData, handleSubmit }: LoginProps) => {
+const LoginComp = ({
+  loading,
+  error,
+  formData,
+  setFormData,
+  handleSubmit,
+}: LoginProps) => {
   return (
     <div className="flex justify-center items-center min-h-screen bg-gray-100 p-4">
       <Form
@@ -29,10 +35,11 @@ const LoginComp = ({ formData, setFormData, handleSubmit }: LoginProps) => {
               className="py-2 px-3"
             />
           </Form.Item>
-
           <Form.Item
             label="Password"
             name="password"
+            validateStatus={error ? "error" : ""}
+            help={error ? "Incorrect password" : ""}
             rules={[{ required: true, message: "Please enter your password" }]}
           >
             <Input.Password
@@ -51,6 +58,7 @@ const LoginComp = ({ formData, setFormData, handleSubmit }: LoginProps) => {
               htmlType="submit"
               className="w-full py-2"
               size="large"
+              loading={loading}
             >
               Login
             </Button>

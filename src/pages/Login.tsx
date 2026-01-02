@@ -44,30 +44,24 @@ const Login = () => {
       setToken(localStorage.getItem("token") ?? "");
       setIsLoggedIn(true);
 
-      // OPTIONAL: set u  ser only if backend returns user object
       setUser(loginData.user);
 
-      navigate("/");
+      if (!response.error) navigate("/");
     } catch (err) {
       console.error(err);
     }
   };
 
   console.log(data);
-
-  if (error) return <h1>new Error{error.message}</h1>;
-
   return (
     <div>
-      {loading ? (
-        <p>Loading...</p>
-      ) : (
-        <LoginComp
-          formData={formData}
-          setFormData={setFormData}
-          handleSubmit={handleSubmit}
-        />
-      )}
+      <LoginComp
+        formData={formData}
+        setFormData={setFormData}
+        handleSubmit={handleSubmit}
+        error={error}
+        loading={loading}
+      />
     </div>
   );
 };

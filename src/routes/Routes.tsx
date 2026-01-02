@@ -7,7 +7,6 @@ import Login from "../pages/Login";
 
 import MovieDetails from "../pages/Movies/MovieDetails";
 import MovieList from "../pages/Movies/MovieList";
-import MovieCardPage from "../pages/Movies/MovieCardPage";
 import AddMovies from "../pages/Movies/AddMovies";
 import EditMovie from "../pages/Movies/EditMovie";
 
@@ -28,7 +27,6 @@ const PageRoutes = () => {
 
           <Route path="movie-cards/:id" element={<MovieDetails />} />
           <Route path="movie-list" element={<MovieList />} />
-          <Route path="movie-card" element={<MovieCardPage />} />
           <Route path="movies-card/create" element={<AddMovies />} />
           <Route path="movies-card/:id/edit" element={<EditMovie />} />
 
