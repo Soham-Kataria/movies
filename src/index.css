@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.nav-links {
+    @apply p-3 transition-opacity duration-200;
+}
+
+.nav-links:hover {
+    opacity: 0.5;
+}

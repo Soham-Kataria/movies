@@ -1,0 +1,123 @@
+import { gql } from "@apollo/client";
+
+export const QueryMovies = gql`
+  query Movies($filter: MoviesFilter!, $sort: ListMoviesSort!) {
+    movies(filter: $filter, sort: $sort) {
+      data {
+        id
+        title
+        imageUrl
+        releaseDate
+        voteAverage
+        originalLanguage
+        runtime
+      }
+    }
+  }
+`;
+
+export const QueryMovie = gql`
+  query movie($id: ID!) {
+    movie(id: $id) {
+      message
+      data {
+        id
+        adult
+        budget
+        homePage
+        streamingOn
+        originalLanguage
+        originalTitle
+        overview
+        popularity
+        releaseDate
+        revenue
+        runtime
+        status
+        tagline
+        title
+        video
+        voteAverage
+        voteCount
+        createdAt
+        imageUrl
+        genres {
+          id
+          name
+        }
+      }
+    }
+  }
+`;
+
+// countries {
+//           id
+//           countryCode
+//           englishName
+//         }
+//         languages {
+//           id
+//           languageCode
+//           englishName
+//         }
+//         movieCollection {
+//           id
+//           tmdbId
+//           name
+//           overview
+//           posterPath
+//           backdropPath
+//         }
+//         movieImages {
+//           id
+//           mediaId
+//           personId
+//           collectionId
+//           mediaType
+//           aspectRatio
+//           filePath
+//           height
+//           voteAverage
+//           voteCount
+//           width
+//           languageCode
+//           imageType
+//         }
+//         movieVideo {
+//           id
+//           mediaId
+//           mediaType
+//           languageCode
+//           countryCode
+//           site
+//           size
+//           official
+//           publishedAt
+//         }
+
+//         castAndCrew {
+//           id
+//           name
+//           creditType
+//           department
+//           job
+//           character
+//           characterAdult
+//           characterGender
+//           order
+//           tmdbId
+//           birthday
+//           knownForDepartment
+//           deathday
+//           alsoKnownAs
+//           gender
+//           biography
+//           popularity
+//           placeOfBirth
+//           profilePath
+//           homePage
+//           adult
+//           createdAt
+//           updatedAt
+//           deletedAt
+//         }
