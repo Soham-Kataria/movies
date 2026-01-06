@@ -32,8 +32,7 @@ const MovieCard = ({ id }: MovieCardProps) => {
   const redirect = () => {
     navigate(`/movie-cards/${id}`);
   };
-  // console.log(movie.imageUrl);
-
+  
   return (
     <Card
       hoverable

@@ -4,7 +4,6 @@ import {
   Divider,
   Button,
   Rate,
-  Tag,
   Image,
   Descriptions,
   Spin,
@@ -12,10 +11,13 @@ import {
   Carousel,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
-import { useLocation, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client/react";
-import { QueryMovie } from "../../backend/QueryMovie";
-import type { MovieQueryResponse } from "../../constants/types";
+import { MovieCredits, QueryMovie } from "../../backend/QueryMovie";
+import type {
+  CreditsResponse,
+  MovieQueryResponse,
+} from "../../constants/types";
 import DeleteMovie from "../../components/Movies/DeleteMovie";
 import Breadcrumbs from "../../components/BreadCrumbs";
 
@@ -30,9 +32,14 @@ const MovieDetails = () => {
     skip: !id,
   });
 
-  const location = useLocation();
+  const { data: credits } = useQuery<CreditsResponse>(MovieCredits, {
+    variables: {
+      id,
+    },
+  });
 
-  const from = location.state?.from;
+  // console.log(credits?.listMovieCredits.data.person.id);
+  console.log(credits?.listMovieCredits.data);
 
   if (loading) {
     return (
@@ -54,7 +61,6 @@ const MovieDetails = () => {
 
   const movie = data?.movie?.data;
   if (!movie) return null;
-  console.log(from);
 
   return (
     <>
@@ -63,7 +69,10 @@ const MovieDetails = () => {
           items={[
             { title: "Home", path: "/" },
             { title: "Movies", path: "/movie-list" },
-            { title: `${movie.title||"Movie"} Details`, path: `/movies/${id}` },
+            {
+              title: `${movie.title || "Movie"} Details`,
+              path: `/movies/${id}`,
+            },
           ]}
         />
       </div>
@@ -87,7 +96,7 @@ const MovieDetails = () => {
                 Edit Movie
               </Button>
 
-              <DeleteMovie id={id} />
+              {id && <DeleteMovie id={id} />}
               <Button
                 icon={<ArrowLeftOutlined />}
                 variant="solid"
@@ -103,14 +112,6 @@ const MovieDetails = () => {
 
           {/* Poster + Core Info */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* <Image
-            src={movie.imageUrl}
-            alt={movie.title}
-            fallback="/no-poster.png"
-            className="rounded"
-            preview
-          /> */}
-
             <div className="w-full max-w-68 mx-auto">
               <Carousel arrows infinite={false}>
                 {[1, 2, 3, 4, 5].map((_, i) => (
@@ -192,7 +193,7 @@ const MovieDetails = () => {
           )}
 
           {/* Genres */}
-          {movie?.genres?.length && movie.genres.length > 0 && (
+          {/* {movie?.genres?.length && movie.genres.length > 0 && (
             <>
               <Divider />
               <Title level={4}>Genres</Title>
@@ -202,7 +203,7 @@ const MovieDetails = () => {
                 ))}
               </div>
             </>
-          )}
+          )} */}
 
           {/* Financials */}
           <Divider />
@@ -247,6 +248,15 @@ const MovieDetails = () => {
               ? new Date(movie.createdAt).toLocaleString()
               : "N/A"}
           </Text>
+
+          <div className="md:col-span-2">
+            <Descriptions
+              bordered
+              size="small"
+              column={1}
+              styles={{ label: { fontWeight: 600 } }}
+            ></Descriptions>
+          </div>
         </Card>
       </section>
     </>

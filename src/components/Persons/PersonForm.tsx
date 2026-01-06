@@ -1,11 +1,17 @@
 import { Form, Button, Input, Select } from "antd";
 import { useEffect } from "react";
-import { GenderType, type CreatePersonInput, type EditPersonInput } from "../../constants/types";
+import {
+  GenderType,
+  type CreatePersonInput,
+  type EditPersonInput,
+} from "../../constants/types";
 
 type PersonFormProps = {
   title: string;
   formData: CreatePersonInput | EditPersonInput;
-  setFormData: React.Dispatch<React.SetStateAction<CreatePersonInput|EditPersonInput>>;
+  setFormData: React.Dispatch<
+    React.SetStateAction<CreatePersonInput | EditPersonInput>
+  >;
   handleSubmit: (data: CreatePersonInput) => void;
 };
 
@@ -21,7 +27,8 @@ const PersonForm = ({
   useEffect(() => {
     form.setFieldsValue({
       ...formData,
-      popularity: Number(formData.popularity) || 0,
+      gender: formData.gender || undefined,
+      popularity: Number(formData.popularity) || undefined,
     });
   }, [formData, form]);
 
@@ -96,18 +103,18 @@ const PersonForm = ({
               />
             </Form.Item>
 
-            <Form.Item
-              label="Popularity"
-              name="popularity"
-              rules={[{ required: true }]}
-            >
+            <Form.Item label="Popularity" name="popularity">
               <Input placeholder="e.g. 45.6" />
             </Form.Item>
           </div>
 
           {/* Dates */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Form.Item label="Birthday" name="birthday">
+            <Form.Item
+              label="Birthday"
+              name="birthday"
+              rules={[{ required: true }]}
+            >
               <Input placeholder="YYYY-MM-DD" />
             </Form.Item>
 
@@ -123,7 +130,11 @@ const PersonForm = ({
 
           {/* Location & Links */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <Form.Item label="Place of Birth" name="placeOfBirth">
+            <Form.Item
+              label="Place of Birth"
+              name="placeOfBirth"
+              rules={[{ required: true }]}
+            >
               <Input placeholder="City, Country" />
             </Form.Item>
 

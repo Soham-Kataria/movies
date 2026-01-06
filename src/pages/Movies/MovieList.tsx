@@ -1,32 +1,29 @@
-import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client/react";
-import { Button, Spin } from "antd";
-import InfiniteScroll from "react-infinite-scroll-component";
+import { useEffect, useState } from "react";
+import type { FilterInput, MoviesQueryResult } from "../../constants/types";
 import { QueryMovies } from "../../backend/QueryMovie";
-import MovieCard from "../../components/Movies/MovieCard";
-import Filter from "../../components/Movies/Filter";
-
-import type {
-  Movie,
-  MoviesQueryResult,
-  FilterInput,
-} from "../../constants/types";
+import Cards from "../../components/Movies/Cards";
 import Breadcrumbs from "../../components/BreadCrumbs";
 import Search from "../../components/Search";
-
-const PAGE_SIZE = 10;
+import { Button, Spin } from "antd";
+import Filter from "../../components/Movies/Filter";
+import InfiniteScroll from "react-infinite-scroll-component";
+import { useNavigate } from "react-router-dom";
 
 const MovieList = () => {
+  const navigate = useNavigate();
+  const [hasMore, setHasMore] = useState(false);
+
+  const [searchInput, setSearchInput] = useState("");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [isFilterDiv, setIsFilterDiv] = useState(false);
+
   const [input, setInput] = useState<FilterInput>({
     field: "createdAt",
     order: "DESC",
   });
 
-  const [isFilterDiv, setIsFilterDiv] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-  const [searchInput, setSearchInput] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-
+  let PAGE_SIZE = 10;
   const { data, loading, error, fetchMore } = useQuery<MoviesQueryResult>(
     QueryMovies,
     {
@@ -34,6 +31,7 @@ const MovieList = () => {
         filter: {
           skip: 0,
           limit: PAGE_SIZE,
+          searchTerm: searchQuery || null,
         },
         sort: {
           field: input.field,
@@ -44,19 +42,37 @@ const MovieList = () => {
     }
   );
 
-  const loadMore = async () => {
-    const currentLength = data?.movies.data.length;
+  const currentLength = data?.movies.data.length;
 
-    if (currentLength && currentLength >= data.movies.count) {
+  useEffect(() => {
+    if (!data) return;
+    const total = data.movies.count;
+    const loaded = data.movies.data.length;
+    setHasMore(loaded < total);
+  }, [data]);
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearchQuery(searchInput);
+    }, 500); // debounce delay (ms)
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [searchInput]);
+
+  const loadMore = async () => {
+    if (!currentLength || currentLength >= data.movies.count) {
       setHasMore(false);
       return;
     }
 
-    const res = await fetchMore({
+    await fetchMore({
       variables: {
         filter: {
           skip: currentLength,
           limit: PAGE_SIZE,
+          searchTerm: searchQuery || null,
         },
         sort: {
           field: input.field,
@@ -74,23 +90,12 @@ const MovieList = () => {
         };
       },
     });
-
-    if (res.data && res.data.movies.data.length < PAGE_SIZE) {
-      setHasMore(false);
-    }
   };
 
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setSearchQuery(searchInput);
-    }, 500); // debounce delay (ms)
+  const movies = data?.movies.data;
+  // console.log(data?.movies.count);
+  
 
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [searchInput]);
-
-  /* ---------------- FILTER APPLY ---------------- */
   const handleFilter = async () => {
     setHasMore(true);
 
@@ -99,6 +104,7 @@ const MovieList = () => {
         filter: {
           skip: 0,
           limit: PAGE_SIZE,
+          searchTerm: searchQuery || null,
         },
         sort: {
           field: input.field,
@@ -107,6 +113,7 @@ const MovieList = () => {
       },
       updateQuery: (_, { fetchMoreResult }) => {
         if (!fetchMoreResult) return _;
+
         return {
           movies: {
             ...fetchMoreResult.movies,
@@ -119,17 +126,9 @@ const MovieList = () => {
     setIsFilterDiv(false);
   };
 
-  const filteredMovies = searchQuery
-    ? data?.movies.data.filter((m) =>
-        m.title?.toLowerCase().includes(searchQuery.toLowerCase())
-      )
-    : data?.movies.data;
-  if (error) {
-    return <p className="text-red-500">{error.message}</p>;
-  }
-
   return (
     <div>
+      {error && <p>{error.message}</p>}
       <div className="p-2 mx-2">
         <Breadcrumbs
           items={[
@@ -150,6 +149,17 @@ const MovieList = () => {
               label={"Movie"}
             />
 
+            <Button
+              type="default"
+              variant="solid"
+              color="magenta"
+              className="m-2"
+              onClick={() => navigate(`/movie/create`)}
+            >
+              Add Movie
+            </Button>
+
+            {/* Filter Button + Dropdown */}
             <div className="relative">
               <Button
                 color="cyan"
@@ -171,33 +181,26 @@ const MovieList = () => {
             </div>
           </div>
         </div>
-        <div className="overflow-y:auto">
-          <InfiniteScroll
-            dataLength={filteredMovies?.length ?? 0}
-            next={loadMore}
-            hasMore={hasMore}
-            loader={
-              loading && (
-                <div className="flex justify-center p-4">
-                  <Spin />
-                </div>
-              )
-            }
-            endMessage={
-              <p className="text-center text-gray-500 mt-4">
-                🎉 All movies loaded
-              </p>
-            }
-          >
-            <ul className="mt-4 grid grid-cols-5 gap-4">
-              {filteredMovies?.map((movie: Movie) => (
-                <li key={movie.id}>
-                  <MovieCard id={movie.id} />
-                </li>
-              ))}
-            </ul>
-          </InfiniteScroll>
-        </div>
+        <InfiniteScroll
+          dataLength={movies?.length ?? 0}
+          next={loadMore}
+          hasMore={hasMore}
+          scrollThreshold={1}
+          loader={
+            loading && (
+              <div className="flex justify-center p-4">
+                <Spin />
+              </div>
+            )
+          }
+          endMessage={
+            <p className="text-center text-gray-500 mt-4">
+              🎉 All movies loaded
+            </p>
+          }
+        >
+          <Cards movies={movies} />
+        </InfiniteScroll>
       </div>
     </div>
   );

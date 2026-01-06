@@ -1,3 +1,5 @@
+import type { Dayjs } from "dayjs";
+
 export type User = {
   email: string;
   password: string;
@@ -6,14 +8,13 @@ export type User = {
 export type ProviderProps = {
   children: React.ReactNode;
 };
-
 export type ProviderType = {
   user: User | null;
-  setUser: React.Dispatch<React.SetStateAction<User | null>>;
+  token: string;
   isLoggedIn: boolean;
-  setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-  token: string | null;
-  setToken: React.Dispatch<React.SetStateAction<string>>;
+  authInitialized: boolean;
+  login: (token: string, user?: User) => void;
+  logout: () => void;
 };
 
 export type InputProps = {
@@ -56,8 +57,8 @@ export type LoginProps = {
   formData: User;
   setFormData: React.Dispatch<React.SetStateAction<User>>;
   handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
-  error: Error | undefined
-  loading:boolean
+  error: Error | undefined;
+  loading: boolean;
 };
 
 export type MovieListResponse = {
@@ -83,8 +84,9 @@ export type FormPropsType = {
   setFormData: React.Dispatch<
     React.SetStateAction<MovieInput | EditMovieInput>
   >;
-  // handleSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
   handleSubmit: (value: MovieInput) => void;
+  error: Error | undefined;
+  loading: boolean;
 };
 
 export type LoginFormData = {
@@ -133,11 +135,13 @@ export type EditMovieInput = {
   originalTitle?: string;
   title?: string;
   overview?: string;
-  releaseDate?: string;
+  releaseDate?: Dayjs;
   revenue?: number;
   runtime?: number;
   status?: string;
   tagline?: string;
+  // credits?: CreditsInput[]
+
 };
 
 export type MovieInput = {
@@ -152,6 +156,35 @@ export type MovieInput = {
   runtime: number;
   status: string;
   tagline: string;
+  // credits: CreditsInput[]
+};
+export type CreditsResponse = {
+  listMovieCredits: {
+    count: number;
+    data: {
+      id?: string;
+      person: CreditPersonInput;
+      creditType?: string;
+      department?: string;
+      job?: string;
+      character?: string;
+    }[];
+  };
+};
+
+export type CreditsInput = {
+  id:string
+  creditType: string;
+  department: string;
+  job: string;
+  character: string;
+  characterAdult: boolean;
+  characterGender: GenderType;
+  person: CreditPersonInput;
+};
+
+export type CreditPersonInput = {
+  id?: string;
 };
 
 export type UpdateMovieInput = {
@@ -210,7 +243,7 @@ export type Movie = {
   voteAverage?: number;
   voteCount?: number;
   createdAt?: DateTime;
-
+  // credits: Credits[];
   castAndCrew?: CastAndCrew[];
   genres?: Genre[];
   movieVideo?: Video[];

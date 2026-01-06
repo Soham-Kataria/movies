@@ -37,7 +37,7 @@ const DeletePerson = ({ id }: DeletePersonProps) => {
   return (
     <>
       <Button
-        className="m-2"
+        // className="m-2"
         danger
         type="primary"
         color="red"

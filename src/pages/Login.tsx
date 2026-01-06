@@ -5,13 +5,16 @@ import { useNavigate } from "react-router-dom";
 import { useMutation } from "@apollo/client/react";
 import { LoginMutation } from "../backend/MutateMovie";
 import type { LoginFormData, LoginResponse } from "../constants/types";
+import { message } from "antd";
 
 const Login = () => {
   const userContext = useContext(UserContext);
-  const { setUser, setIsLoggedIn, setToken } = userContext;
+  const { login } = userContext;
 
   const [Login, { data, loading, error }] =
-    useMutation<LoginResponse>(LoginMutation);
+    useMutation<LoginResponse>(LoginMutation,{onError:(error)=>{
+      message.error(`Login Failed: ${error.message}`)
+    }});
 
   const [formData, setFormData] = useState<LoginFormData>({
     email: "",
@@ -23,33 +26,26 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault;
 
-    try {
-      const response = await Login({
-        variables: {
-          data: {
-            email: formData.email,
-            password: formData.password,
-          },
+    const response = await Login({
+      variables: {
+        data: {
+          email: formData.email,
+          password: formData.password,
         },
-      });
+      },
+    });
 
-      const loginData = response.data?.emailPasswordLogIn;
+    const loginData = response.data?.emailPasswordLogIn;
 
-      if (!loginData?.data?.token) {
-        throw new Error("Authentication failed");
-      }
-      if (loginData.data.token) {
-        localStorage.setItem("token", loginData.data.token);
-      }
-      setToken(localStorage.getItem("token") ?? "");
-      setIsLoggedIn(true);
-
-      setUser(loginData.user);
-
-      if (!response.error) navigate("/");
-    } catch (err) {
-      console.error(err);
+    if (!loginData?.data?.token) {
+      throw new Error("Authentication failed");
     }
+    if (loginData.data.token) {
+      localStorage.setItem("token", loginData.data.token);
+    }
+    login(loginData.data.token, formData);
+
+    if (!response.error) navigate("/");
   };
 
   console.log(data);

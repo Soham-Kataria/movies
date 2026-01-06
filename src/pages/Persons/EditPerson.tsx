@@ -21,7 +21,6 @@ const EditPerson = () => {
   });
 
   const person = data?.person.data;
-  console.log(person?.homePage);
 
   const [formData, setFormData] = useState<EditPersonInput>({
     tmdbId: person?.tmdbId,

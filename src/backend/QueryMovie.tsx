@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const QueryMovies = gql`
   query Movies($filter: MoviesFilter!, $sort: ListMoviesSort!) {
     movies(filter: $filter, sort: $sort) {
+      count
       data {
         id
         title
@@ -11,6 +12,34 @@ export const QueryMovies = gql`
         voteAverage
         originalLanguage
         runtime
+      }
+    }
+  }
+`;
+
+export const MovieCredits = gql`
+  query listMovieCredits($id: ID!, $filter: ListCreditMovieFilter) {
+    listMovieCredits(id: $id, filter: $filter) {
+      count
+      data {
+        id
+        person{
+          id
+        }
+      }
+    }
+  }
+`;
+
+export const Movie = gql`
+  query movie($id: ID!) {
+    movie(id: $id) {
+      message
+      data {
+        imageUrl
+        title
+        originalLanguage
+        releaseDate
       }
     }
   }

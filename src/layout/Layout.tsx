@@ -3,10 +3,9 @@ import Navbar from "../components/Navbar";
 
 const Layout = () => {
   return (
-    <div className="relative">
+    <div>
       <Navbar />
-      <hr />
-      <div className="mt-11">
+      <div className="mt-16">
         <Outlet />
       </div>
     </div>

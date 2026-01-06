@@ -5,11 +5,16 @@ import type {
   MovieQueryResponse,
   EditMovieInput,
   MovieSuccessResponse,
+  MovieInput,
 } from "../../constants/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { editMovie } from "../../backend/MutateMovie";
-import { QueryMovie } from "../../backend/QueryMovie";
+import {
+  QueryMovie,
+  QueryMovies,
+} from "../../backend/QueryMovie";
 import Breadcrumbs from "../../components/BreadCrumbs";
+import dayjs from "dayjs";
 
 const EditMovie = () => {
   const params = useParams();
@@ -21,14 +26,15 @@ const EditMovie = () => {
 
   const movie = search?.movie.data;
 
-  const [formData, setFormData] = useState<EditMovieInput>({
+
+  const [formData, setFormData] = useState<MovieInput | EditMovieInput>({
     adult: movie?.adult,
     budget: movie?.budget,
     originalLanguage: movie?.originalLanguage,
     originalTitle: movie?.originalTitle,
     title: movie?.title,
     overview: movie?.overview,
-    releaseDate: movie?.releaseDate,
+    releaseDate: movie?.releaseDate ? dayjs(movie.releaseDate) : undefined,
     revenue: movie?.revenue,
     runtime: movie?.runtime,
     status: movie?.status,
@@ -39,31 +45,48 @@ const EditMovie = () => {
   const [EditMovie, { data, loading, error }] =
     useMutation<MovieSuccessResponse>(editMovie, {
       onCompleted: () => {
-        navigate("/");
+        navigate("/movie-list");
       },
-      refetchQueries: ["Movies"],
+      refetchQueries: [
+        {
+          query: QueryMovies,
+          variables: {
+            filter: {
+              skip: 0,
+              limit: 10,
+            },
+            sort: {
+              field: "createdAt",
+              order: "DESC",
+            },
+          },
+        },
+      ],
+      awaitRefetchQueries: true,
     });
 
-  const handleSubmit = () => {
+  const handleSubmit = (values: MovieInput) => {
+    console.log(values);
+
     EditMovie({
       variables: {
         id,
         data: {
-          adult: formData.adult,
-          budget: formData.budget,
-          originalLanguage: formData.originalLanguage,
-          originalTitle: formData.originalTitle,
-          title: formData.title,
-          overview: formData.overview,
-          releaseDate: formData.releaseDate?.toString(),
-          revenue: formData.revenue,
-          runtime: formData.runtime,
-          status: formData.status,
-          tagline: formData.tagline,
+          adult: values.adult,
+          budget: values.budget,
+          originalLanguage: values.originalLanguage,
+          originalTitle: values.originalTitle,
+          title: values.title,
+          overview: values.overview,
+          releaseDate: values.releaseDate,
+          revenue: values.revenue,
+          runtime: values.runtime,
+          status: values.status,
+          tagline: values.tagline,
         },
       },
     });
-    console.log(formData, data?.updateMovie.data.id);
+    console.log(values, data?.updateMovie.data.id);
   };
 
   return (
@@ -81,18 +104,14 @@ const EditMovie = () => {
         />
       </div>
 
-      {loading && <p>Loading...</p>}
       <MovieForm
         title={"Edit Movie"}
         formData={formData}
         setFormData={setFormData}
         handleSubmit={handleSubmit}
+        loading={loading}
+        error={error}
       />
-      {error && (
-        <p>
-          {error.name} - {error.message}
-        </p>
-      )}
     </div>
   );
 };

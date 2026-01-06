@@ -14,7 +14,7 @@ const MovieCardPage = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const [input, setInput] = useState<FilterInput>({
-    limit: 10,
+    // limit: 10,
     field: "releaseDate",
     order: "DESC",
   });

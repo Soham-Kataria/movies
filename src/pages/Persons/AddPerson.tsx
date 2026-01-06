@@ -1,7 +1,6 @@
 import { useMutation } from "@apollo/client/react";
 import { CreatePerson } from "../../backend/MutatePerson";
 import {
-  GenderType,
   type CreatePersonInput,
   type CreatePersonResponse,
   type EditPersonInput,
@@ -12,7 +11,6 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/BreadCrumbs";
 
 const AddPerson = () => {
-  // const MALE = "MALE"
   const [formData, setFormData] = useState<CreatePersonInput | EditPersonInput>(
     {
       tmdbId: "",
@@ -21,13 +19,13 @@ const AddPerson = () => {
       deathday: "",
       name: "",
       alsoKnownAs: [""],
-      gender: GenderType.MALE,
+      gender: undefined,
       biography: "",
       popularity: 0,
       placeOfBirth: "",
       profilePath: "",
       homePage: "",
-      adult: false,
+      adult: undefined,
     }
   );
 
@@ -66,7 +64,6 @@ const AddPerson = () => {
             },
           ]}
         />
-
       </div>
       <PersonForm
         title="Add a Person"

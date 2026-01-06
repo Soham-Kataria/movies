@@ -9,13 +9,18 @@ export type BreadcrumbsItem = {
 type BreadcrumbProps = {
   separator?: React.ReactNode;
   items: BreadcrumbsItem[];
+  style?: React.CSSProperties;
 };
 
-const Breadcrumbs = ({ items, separator }: BreadcrumbProps) => {
+const Breadcrumbs = ({ items, separator, style }: BreadcrumbProps) => {
   return (
     <Breadcrumb
       items={items.map((item) => ({
-        title: <Link to={item.path}>{item.title}</Link>,
+        title: (
+          <Link to={item.path} style={style}>
+            {item.title}
+          </Link>
+        ),
       }))}
       separator={separator}
     />
