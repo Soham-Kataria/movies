@@ -1,24 +1,38 @@
-import { Button, Select, Space, } from "antd";
-import type { FilterProps } from "../../constants/types";
+import { Button, Select, Form } from "antd";
+import type { FilterInput, FilterProps } from "../../constants/types";
+import { useEffect } from "react";
 
 const Filter = ({ input, setInput, handleFilter }: FilterProps) => {
+  const [form] = Form.useForm<FilterInput>();
+  
+
+  useEffect(() => {
+    form.setFieldsValue(input);
+    console.log(input);
+  }, [input, form]);
+
+  const onFinish = (values: FilterInput) => {
+    setInput(values);
+    handleFilter(values);
+  };
+  
+
   return (
     <div className="w-105 rounded-xl border border-slate-200 bg-linear-to-br from-slate-50 to-slate-200 p-5 shadow-lg">
-      <Space orientation="vertical" size="middle" className="w-full">
-        {/* Limit */}
-        
+      <Form
+        form={form}
+        layout="vertical"
+        size="middle"
+        onFinish={onFinish}
+      >
         {/* Sort By */}
-        <div className="flex items-center justify-between gap-4">
-          <label className="w-24 text-sm font-medium text-slate-700">
-            Sort By
-          </label>
+        <Form.Item
+          label="Sort By"
+          name="field"
+          className="mb-4"
+        >
           <Select
-            className="flex-1"
             placeholder="Select field"
-            value={input?.field}
-            onChange={(value) =>
-              setInput?.((prev) => ({ ...prev, field: value }))
-            }
             options={[
               { value: "releaseDate", label: "Release Date" },
               { value: "createdAt", label: "Created At" },
@@ -27,33 +41,31 @@ const Filter = ({ input, setInput, handleFilter }: FilterProps) => {
               { value: "voteAverage", label: "Vote Average" },
             ]}
           />
-        </div>
+        </Form.Item>
+
         {/* Order */}
-        <div className="flex items-center justify-between gap-4">
-          <label className="w-24 text-sm font-medium text-slate-700">
-            Order
-          </label>
+        <Form.Item
+          label="Order"
+          name="order"
+          className="mb-6"
+        >
           <Select
-            className="flex-1"
             placeholder="Select order"
-            value={input?.order}
-            onChange={(value) =>
-              setInput?.((prev) => ({ ...prev, order: value }))
-            }
             options={[
               { value: "ASC", label: "Ascending" },
               { value: "DESC", label: "Descending" },
             ]}
           />
-        </div>
+        </Form.Item>
+
         <div className="flex justify-end">
-          <Button type="primary" className="px-6" onClick={handleFilter}>
+          <Button type="primary" htmlType="submit" className="px-6">
             Apply Filters
           </Button>
         </div>
-      </Space>
+      </Form>
     </div>
   );
 };
 
-export default Filter; 
+export default Filter;

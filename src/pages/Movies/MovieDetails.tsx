@@ -68,7 +68,7 @@ const MovieDetails = () => {
         <Breadcrumbs
           items={[
             { title: "Home", path: "/" },
-            { title: "Movies", path: "/movie-list" },
+            { title: "Movie List", path: "/movie-list" },
             {
               title: `${movie.title || "Movie"} Details`,
               path: `/movies/${id}`,

@@ -54,12 +54,14 @@ const AddMovies = () => {
     });
 
   const handleSubmit = (values: MovieInput) => {
+
     const payload: MovieInput = {
       ...values,
       budget: Number(values.budget),
       revenue: Number(values.revenue),
       runtime: Number(values.runtime),
       releaseDate: values.releaseDate, // already normalized in form
+      
     };
 
     createMovieMutation({

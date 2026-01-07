@@ -1,6 +1,7 @@
 import { Card, Image, Typography } from "antd";
 import type { Movie } from "../../constants/types";
 import { useNavigate } from "react-router-dom";
+import DeleteMovie from "./DeleteMovie";
 
 type CardProps = {
   movies: Movie[] | undefined;
@@ -47,6 +48,7 @@ const Cards = ({ movies }: CardProps) => {
               <Text>{movie.runtime} mins</Text>
             </section>
           </section>
+          {/* <DeleteMovie id={movie.id}/> */}
         </Card>
       ))}
     </div>

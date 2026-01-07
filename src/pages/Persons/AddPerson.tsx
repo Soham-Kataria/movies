@@ -14,11 +14,11 @@ const AddPerson = () => {
   const [formData, setFormData] = useState<CreatePersonInput | EditPersonInput>(
     {
       tmdbId: "",
-      birthday: "",
+      birthday: undefined,
       knownForDepartment: "",
-      deathday: "",
+      deathday: undefined,
       name: "",
-      alsoKnownAs: [""],
+      alsoKnownAs: "",
       gender: undefined,
       biography: "",
       popularity: 0,
@@ -70,8 +70,8 @@ const AddPerson = () => {
         formData={formData}
         setFormData={setFormData}
         handleSubmit={handleSubmit}
+        loading={loading}
       />
-      {loading && <p>Loading...</p>}
     </div>
   );
 };

@@ -1,10 +1,11 @@
 import { useQuery } from "@apollo/client/react";
 import { useNavigate, useParams } from "react-router-dom";
-import { Descriptions, Spin, Alert, Typography, Button } from "antd";
+import { Descriptions, Spin, Typography, Button, message } from "antd";
 import { QueryPerson } from "../../backend/QueryPerson";
 import type { Person } from "../../constants/types";
 import DeletePerson from "../../components/Persons/DeletePerson";
 import Breadcrumbs from "../../components/BreadCrumbs";
+import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
@@ -23,8 +24,7 @@ const PersonDetails = () => {
     skip: !id,
   });
 
-  if (loading) return <Spin size="large" />;
-  if (error) return <Alert type="error" message={error.message} />;
+  if (error) message.error(error.message);
 
   const person = data?.person.data;
   if (!person) return null;
@@ -44,11 +44,12 @@ const PersonDetails = () => {
           ]}
         />
       </div>
+      {loading && <Spin fullscreen />}
 
       <div className="px-6 mx-auto max-w-7xl">
         <div className="flex items-center justify-between">
           <Title level={3}>Person Details</Title>
-          <section>
+          <section className="flex items-center gap-4">
             <Button
               variant="solid"
               type="primary"
@@ -57,11 +58,17 @@ const PersonDetails = () => {
               Edit Person Detail
             </Button>
             <DeletePerson id={id} />
+            <Button
+              icon={<ArrowLeftOutlined />}
+              variant="solid"
+              color="blue"
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </Button>
           </section>
         </div>
         <Descriptions bordered column={1} size="middle">
-          <Descriptions.Item label="ID">{person.id}</Descriptions.Item>
-          <Descriptions.Item label="TMDB ID">{person.tmdbId}</Descriptions.Item>
           <Descriptions.Item label="Name">{person.name}</Descriptions.Item>
           <Descriptions.Item label="Gender">{person.gender}</Descriptions.Item>
           <Descriptions.Item label="Birthday">

@@ -5,7 +5,7 @@ import { QueryMovies } from "../../backend/QueryMovie";
 import Cards from "../../components/Movies/Cards";
 import Breadcrumbs from "../../components/BreadCrumbs";
 import Search from "../../components/Search";
-import { Button, Spin } from "antd";
+import { Button, message, Spin } from "antd";
 import Filter from "../../components/Movies/Filter";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { useNavigate } from "react-router-dom";
@@ -94,10 +94,10 @@ const MovieList = () => {
 
   const movies = data?.movies.data;
   // console.log(data?.movies.count);
-  
 
-  const handleFilter = async () => {
+  const handleFilter = async (values: FilterInput) => {
     setHasMore(true);
+    console.log(values);
 
     await fetchMore({
       variables: {
@@ -107,8 +107,8 @@ const MovieList = () => {
           searchTerm: searchQuery || null,
         },
         sort: {
-          field: input.field,
-          order: input.order,
+          field: values.field,
+          order: values.order,
         },
       },
       updateQuery: (_, { fetchMoreResult }) => {
@@ -125,10 +125,10 @@ const MovieList = () => {
 
     setIsFilterDiv(false);
   };
+  if (error) message.error(error.message);
 
   return (
     <div>
-      {error && <p>{error.message}</p>}
       <div className="p-2 mx-2">
         <Breadcrumbs
           items={[
@@ -199,6 +199,8 @@ const MovieList = () => {
             </p>
           }
         >
+          {loading ? <Spin fullscreen /> : <Cards movies={movies} />}
+
           <Cards movies={movies} />
         </InfiniteScroll>
       </div>

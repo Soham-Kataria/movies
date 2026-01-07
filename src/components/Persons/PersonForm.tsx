@@ -1,4 +1,4 @@
-import { Form, Button, Input, Select } from "antd";
+import { Form, Button, Input, Select, DatePicker } from "antd";
 import { useEffect } from "react";
 import {
   GenderType,
@@ -13,6 +13,7 @@ type PersonFormProps = {
     React.SetStateAction<CreatePersonInput | EditPersonInput>
   >;
   handleSubmit: (data: CreatePersonInput) => void;
+  loading: boolean;
 };
 
 const PersonForm = ({
@@ -20,20 +21,17 @@ const PersonForm = ({
   formData,
   setFormData,
   handleSubmit,
+  loading,
 }: PersonFormProps) => {
   const [form] = Form.useForm();
 
   /* Sync external state → AntD form */
   useEffect(() => {
-    form.setFieldsValue({
-      ...formData,
-      gender: formData.gender || undefined,
-      popularity: Number(formData.popularity) || undefined,
-    });
+    form.setFieldsValue(formData);
   }, [formData, form]);
 
   /* Sync AntD form → external state */
-  const onValuesChange = (_: any, allValues: CreatePersonInput) => {
+  const onValuesChange = (_: any, allValues: any) => {
     setFormData({
       ...allValues,
       popularity: Number(allValues.popularity) || 0,
@@ -41,23 +39,27 @@ const PersonForm = ({
     });
   };
 
-  const onFinish = (values: CreatePersonInput) => {
+  const onFinish = (values: any) => {
+    console.log(values.alsoKnownAs);
+
     handleSubmit({
       ...values,
       popularity: Number(values.popularity),
       adult: Boolean(values.adult),
+      alsoKnownAs: values.alsoKnownAs.split(","),
     });
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center  px-4 p-2">
+    <div className="min-h-screen flex items-center justify-center  px-4 p-2 ">
+
       <Form
         form={form}
         layout="vertical"
         className="w-full max-w-4xl bg-white p-8 rounded-2xl shadow-xl"
         onFinish={onFinish}
         onValuesChange={onValuesChange}
-      >
+        >
         <div className="m-8">
           {/* Header */}
           <div className="mb-6 text-center">
@@ -109,19 +111,36 @@ const PersonForm = ({
           </div>
 
           {/* Dates */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Form.Item
               label="Birthday"
               name="birthday"
               rules={[{ required: true }]}
             >
-              <Input placeholder="YYYY-MM-DD" />
+              <DatePicker className="w-fit" placeholder="YYYY-MM-DD" />
             </Form.Item>
 
             <Form.Item label="Deathday" name="deathday">
-              <Input placeholder="YYYY-MM-DD" />
+              <DatePicker placeholder="YYYY-MM-DD" />
+            </Form.Item>
+            <Form.Item
+              label="Adult"
+              name="adult"
+              rules={[{ required: true, message: "Please select an option" }]}
+            >
+              <Select
+                placeholder="Select"
+                options={[
+                  { value: true, label: "Yes" },
+                  { value: false, label: "No" },
+                ]}
+              />
             </Form.Item>
           </div>
+
+          <Form.Item label="Also Known As" name="alsoKnownAs">
+            <Input />
+          </Form.Item>
 
           {/* Biography */}
           <Form.Item label="Biography" name="biography">
@@ -144,19 +163,6 @@ const PersonForm = ({
           </div>
 
           {/* Flags */}
-          <Form.Item
-            label="Adult"
-            name="adult"
-            rules={[{ required: true, message: "Please select an option" }]}
-          >
-            <Select
-              placeholder="Select"
-              options={[
-                { value: true, label: "Yes" },
-                { value: false, label: "No" },
-              ]}
-            />
-          </Form.Item>
 
           {/* Submit */}
           <Form.Item className="mt-6">
@@ -165,6 +171,7 @@ const PersonForm = ({
               htmlType="submit"
               size="large"
               className="w-full rounded-lg text-lg"
+              loading={loading}
             >
               Save Person
             </Button>

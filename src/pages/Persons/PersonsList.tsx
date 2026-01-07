@@ -1,7 +1,7 @@
 import { useQuery } from "@apollo/client/react";
 import { QueryPersons } from "../../backend/QueryPerson";
 import type { Person, PersonList } from "../../constants/types";
-import { Button, Pagination, Table } from "antd";
+import { Button, message, Pagination, Spin, Table } from "antd";
 import type { PaginationProps } from "antd";
 import { useEffect, useState } from "react";
 import Search from "../../components/Search";
@@ -63,14 +63,19 @@ const PersonsList = () => {
       key: "popularity",
     },
     {
-      title: "Department",
-      dataIndex: "knowForDepartment",
-      key: "knowForDepartment",
+      title: "knownForDepartment",
+      dataIndex: "knownForDepartment",
+      key: "knownForDepartment",
     },
     {
       title: "Also Known As",
       dataIndex: "alsoKnownAs",
       key: "alsoKnownAs",
+    },
+    {
+      title: "DOB",
+      dataIndex: "birthday",
+      key: "birthday",
     },
     {
       title: "Actions",
@@ -102,7 +107,7 @@ const PersonsList = () => {
   ) => {
     console.log(current, pageSize);
   };
-
+  if (error) message.error(error.message);
   return (
     <>
       <div className="p-2 mx-2">
@@ -117,9 +122,6 @@ const PersonsList = () => {
         />
       </div>
       <div className="mx-auto max-w-7xl flex flex-col gap-6">
-        {loading && <p>Loading...</p>}
-        {error && <p>{error.message}</p>}
-
         <div className="flex items-center justify-between">
           <h1 className="text-3xl font-semibold">Person List</h1>
 
@@ -146,26 +148,31 @@ const PersonsList = () => {
         </div>
 
         <div>
-          <Table
-            loading={loading}
-            columns={columns}
-            dataSource={filteredPersons}
-            rowKey="id"
-            pagination={false}
-            bordered
-          />
+          {loading ? (
+            <Spin fullscreen />
+          ) : (
+            <>
+              <Table
+                columns={columns}
+                dataSource={filteredPersons}
+                rowKey="id"
+                pagination={false}
+                bordered
+              />
 
-          <div className="flex justify-center my-6">
-            <Pagination
-              current={pageNo}
-              pageSize={pageSize}
-              total={data?.listPersons.count}
-              onShowSizeChange={onShowSizeChange}
-              onChange={(newPage) => {
-                setSearchParams({ page: String(newPage) });
-              }}
-            />
-          </div>
+              <div className="flex justify-center my-6">
+                <Pagination
+                  current={pageNo}
+                  pageSize={pageSize}
+                  total={data?.listPersons.count}
+                  onShowSizeChange={onShowSizeChange}
+                  onChange={(newPage) => {
+                    setSearchParams({ page: String(newPage) });
+                  }}
+                />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </>

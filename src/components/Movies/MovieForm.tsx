@@ -1,9 +1,9 @@
 import { Form, Button, Input, Select, DatePicker } from "antd";
-import { useEffect, useState } from "react";
-import type { FormPropsType, MovieInput, Person, PersonList } from "../../constants/types";
-import { useQuery } from "@apollo/client/react";
-import { QueryPersons } from "../../backend/QueryPerson";
-import useDebounce from "../../utils/Debounce";
+import { useEffect } from "react";
+import type { FormPropsType, MovieInput } from "../../constants/types";
+// import { useQuery } from "@apollo/client/react";
+// import { QueryPersons } from "../../backend/QueryPerson";
+// import useDebounce from "../../utils/Debounce";
 
 const MovieForm = ({
   title,
@@ -13,32 +13,32 @@ const MovieForm = ({
   loading,
 }: FormPropsType) => {
   const [form] = Form.useForm();
-  const [personList, setPersonList] = useState<Person[]>();
-  const [searchText, setSearchText] = useState("");
-  const debouncedSearch = useDebounce(searchText, 500);
+  // const [personList, setPersonList] = useState<Person[]>();
+  // const [searchText] = useState("");
+  // const debouncedSearch = useDebounce(searchText, 500);
 
-  const { data: personData, loading: personLoading } = useQuery<PersonList>(
-    QueryPersons,
-    {
-      variables: {
-        filter: { limit: 1000 },
-        sort: {
-          field: "createdAt",
-          order: "DESC",
-        },
-      },
-    }
-  );
+  // const { data: personData} = useQuery<PersonList>(
+  //   QueryPersons,
+  //   {
+  //     variables: {
+  //       filter: { limit: 1000 },
+  //       sort: {
+  //         field: "createdAt",
+  //         order: "DESC",
+  //       },
+  //     },
+  //   }
+  // );
 
-  const data = debouncedSearch
-    ? personData?.listPersons.data
-        .filter((p) => p.name.toLowerCase().includes(searchText.toLowerCase()))
-        .map((p) => p)
-    : personData?.listPersons.data.map((p) => p);
+  // const data = debouncedSearch
+  //   ? personData?.listPersons.data
+  //       .filter((p) => p.name.toLowerCase().includes(searchText.toLowerCase()))
+  //       .map((p) => p)
+  //   : personData?.listPersons.data.map((p) => p);
 
-  useEffect(() => {
-    setPersonList(data);
-  }, [personData, debouncedSearch]);
+  // useEffect(() => {
+  //   setPersonList(data);
+  // }, [personData, debouncedSearch]);
 
   useEffect(() => {
     const formattedData = {

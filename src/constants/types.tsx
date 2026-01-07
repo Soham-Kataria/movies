@@ -42,7 +42,7 @@ export type LabelProps = {
 };
 
 export type FilterProps = {
-  handleFilter: () => Promise<void>;
+  handleFilter: (values:FilterInput) => Promise<void>;
   input: FilterInput;
   setInput: React.Dispatch<React.SetStateAction<FilterInput>>;
 };
@@ -140,8 +140,6 @@ export type EditMovieInput = {
   runtime?: number;
   status?: string;
   tagline?: string;
-  // credits?: CreditsInput[]
-
 };
 
 export type MovieInput = {
@@ -156,7 +154,6 @@ export type MovieInput = {
   runtime: number;
   status: string;
   tagline: string;
-  // credits: CreditsInput[]
 };
 export type CreditsResponse = {
   listMovieCredits: {
@@ -388,11 +385,11 @@ export type CreatePersonResponse = {
 
 export type CreatePersonInput = {
   tmdbId: string;
-  birthday: DateTime;
+  birthday: Dayjs;
   knownForDepartment: string;
-  deathday: DateTime;
+  deathday: Dayjs;
   name: string;
-  alsoKnownAs: [string];
+  alsoKnownAs: string;
   gender: GenderType;
   biography: string;
   popularity: number;
@@ -403,11 +400,11 @@ export type CreatePersonInput = {
 };
 export type EditPersonInput = {
   tmdbId?: string;
-  birthday?: DateTime;
+  birthday?: Dayjs;
   knownForDepartment?: string;
-  deathday?: DateTime;
+  deathday?: Dayjs;
   name?: string;
-  alsoKnownAs?: [string];
+  alsoKnownAs?: string;
   gender?: GenderType;
   biography?: string;
   popularity?: number;
