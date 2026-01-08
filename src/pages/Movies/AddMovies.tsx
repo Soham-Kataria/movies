@@ -30,6 +30,7 @@ const AddMovies = () => {
     runtime: undefined,
     status: "",
     tagline: "",
+    credits: [],
   });
 
   const [createMovieMutation, { loading, error }] =
@@ -54,14 +55,15 @@ const AddMovies = () => {
     });
 
   const handleSubmit = (values: MovieInput) => {
+    console.log(values.credits);
 
     const payload: MovieInput = {
       ...values,
       budget: Number(values.budget),
       revenue: Number(values.revenue),
       runtime: Number(values.runtime),
-      releaseDate: values.releaseDate, // already normalized in form
-      
+      releaseDate: values.releaseDate,
+      credits: values.credits,
     };
 
     createMovieMutation({

@@ -9,12 +9,10 @@ import type {
 } from "../../constants/types";
 import { useMutation, useQuery } from "@apollo/client/react";
 import { editMovie } from "../../backend/MutateMovie";
-import {
-  QueryMovie,
-  QueryMovies,
-} from "../../backend/QueryMovie";
+import { QueryMovie, QueryMovies } from "../../backend/QueryMovie";
 import Breadcrumbs from "../../components/BreadCrumbs";
 import dayjs from "dayjs";
+import { message } from "antd";
 
 const EditMovie = () => {
   const params = useParams();
@@ -25,7 +23,6 @@ const EditMovie = () => {
   });
 
   const movie = search?.movie.data;
-
 
   const [formData, setFormData] = useState<MovieInput | EditMovieInput>({
     adult: movie?.adult,
@@ -39,13 +36,18 @@ const EditMovie = () => {
     runtime: movie?.runtime,
     status: movie?.status,
     tagline: movie?.tagline,
+    credits: movie?.castAndCrew,
   });
   const navigate = useNavigate();
 
   const [EditMovie, { data, loading, error }] =
     useMutation<MovieSuccessResponse>(editMovie, {
       onCompleted: () => {
+        message.success(`${movie?.title} Details Updated`);
         navigate("/movie-list");
+      },
+      onError: () => {
+        message.error(error?.message || `Something Went Worng`);
       },
       refetchQueries: [
         {
@@ -83,10 +85,17 @@ const EditMovie = () => {
           runtime: values.runtime,
           status: values.status,
           tagline: values.tagline,
+          credits: values.credits.map((c: any) => ({
+            ...c,
+            person: {
+              name: c.person.label,
+              id: c.person.value,
+            },
+          })),
         },
       },
     });
-    console.log(values, data?.updateMovie.data.id);
+    // console.log(values, data?.updateMovie.data.id);
   };
 
   return (

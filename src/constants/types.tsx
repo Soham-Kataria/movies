@@ -42,7 +42,7 @@ export type LabelProps = {
 };
 
 export type FilterProps = {
-  handleFilter: (values:FilterInput) => Promise<void>;
+  handleFilter: (values: FilterInput) => Promise<void>;
   input: FilterInput;
   setInput: React.Dispatch<React.SetStateAction<FilterInput>>;
 };
@@ -140,6 +140,7 @@ export type EditMovieInput = {
   runtime?: number;
   status?: string;
   tagline?: string;
+  credits?: CreditsInput[] | CastAndCrew[];
 };
 
 export type MovieInput = {
@@ -154,6 +155,7 @@ export type MovieInput = {
   runtime: number;
   status: string;
   tagline: string;
+  credits: CreditsInput[];
 };
 export type CreditsResponse = {
   listMovieCredits: {
@@ -170,18 +172,19 @@ export type CreditsResponse = {
 };
 
 export type CreditsInput = {
-  id:string
-  creditType: string;
-  department: string;
-  job: string;
-  character: string;
-  characterAdult: boolean;
-  characterGender: GenderType;
-  person: CreditPersonInput;
+  creditType?: string;
+  department?: string;
+  job?: string;
+  character?: string;
+  characterAdult?: boolean;
+  characterGender?: GenderType;
+  name?: string;
+  person?: CreditPersonInput;
 };
 
 export type CreditPersonInput = {
-  id?: string;
+  id: string;
+  name?: string;
 };
 
 export type UpdateMovieInput = {
@@ -196,6 +199,7 @@ export type UpdateMovieInput = {
   runtime: number;
   status: string;
   tagline: string;
+  credits?: CreditsInput[];
 };
 export type DateTime = string;
 export type DateScalar = string;

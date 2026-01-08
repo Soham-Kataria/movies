@@ -9,7 +9,7 @@ import { ArrowLeftOutlined } from "@ant-design/icons";
 
 const { Title } = Typography;
 
-type PersonQueryResponse = {
+export type PersonQueryResponse = {
   person: {
     message: string;
     data: Person;

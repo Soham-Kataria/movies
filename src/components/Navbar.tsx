@@ -16,7 +16,7 @@ const Navbar = () => {
   };
 
   return (
-    <Header className="fixed top-0 left-0 w-full z-50 shadow-md">
+    <Header className="fixed top-0 left-0 w-full z-100 shadow-md">
       <div className="bg-gray-800 text-white flex justify-between p-4 items-center">
         <div className="font-bold flex items-center gap-4">
           <Link to="/">TMBD</Link>

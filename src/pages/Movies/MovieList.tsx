@@ -199,8 +199,6 @@ const MovieList = () => {
             </p>
           }
         >
-          {loading ? <Spin fullscreen /> : <Cards movies={movies} />}
-
           <Cards movies={movies} />
         </InfiniteScroll>
       </div>

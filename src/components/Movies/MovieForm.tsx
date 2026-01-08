@@ -1,9 +1,7 @@
-import { Form, Button, Input, Select, DatePicker } from "antd";
-import { useEffect } from "react";
+import { Button, DatePicker, Form, Input, Select } from "antd";
 import type { FormPropsType, MovieInput } from "../../constants/types";
-// import { useQuery } from "@apollo/client/react";
-// import { QueryPersons } from "../../backend/QueryPerson";
-// import useDebounce from "../../utils/Debounce";
+import { useEffect } from "react";
+import CastAndCrew from "./CastAndCrew";
 
 const MovieForm = ({
   title,
@@ -13,40 +11,14 @@ const MovieForm = ({
   loading,
 }: FormPropsType) => {
   const [form] = Form.useForm();
-  // const [personList, setPersonList] = useState<Person[]>();
-  // const [searchText] = useState("");
-  // const debouncedSearch = useDebounce(searchText, 500);
-
-  // const { data: personData} = useQuery<PersonList>(
-  //   QueryPersons,
-  //   {
-  //     variables: {
-  //       filter: { limit: 1000 },
-  //       sort: {
-  //         field: "createdAt",
-  //         order: "DESC",
-  //       },
-  //     },
-  //   }
-  // );
-
-  // const data = debouncedSearch
-  //   ? personData?.listPersons.data
-  //       .filter((p) => p.name.toLowerCase().includes(searchText.toLowerCase()))
-  //       .map((p) => p)
-  //   : personData?.listPersons.data.map((p) => p);
-
-  // useEffect(() => {
-  //   setPersonList(data);
-  // }, [personData, debouncedSearch]);
 
   useEffect(() => {
     const formattedData = {
       ...formData,
       adult: formData.adult ?? undefined,
-      budget: (formData.budget) ?? undefined,
-      revenue: (formData.revenue) ?? undefined,
-      runtime: (formData.runtime) ?? undefined,
+      budget: formData.budget ?? undefined,
+      revenue: formData.revenue ?? undefined,
+      runtime: formData.runtime ?? undefined,
     };
     form.setFieldsValue(formattedData);
   }, [formData, form]);
@@ -55,13 +27,24 @@ const MovieForm = ({
     setFormData(allValues);
   };
 
+  // const [castFields,setCastFields] = useState<number[]>([])
+
   const onFinish = (values: MovieInput) => {
+    console.log(values);
+
     const payload = {
       ...values,
       adult: Boolean(values.adult),
       budget: Number(values.budget),
       revenue: Number(values.revenue),
       runtime: Number(values.runtime),
+      credits: values.credits.map((c: any) => ({
+        ...c,
+        name: c.person.name,
+        person: {
+          id: c.person.value,
+        },
+      })),
     };
     handleSubmit(payload);
   };
@@ -220,26 +203,28 @@ const MovieForm = ({
             >
               <Input placeholder="e.g. 450000000" />
             </Form.Item>
-            {/* <Form.Item label="credits" name="creditsIds">
-              <Select
-                mode="multiple"
-                showSearch
-                allowClear
-                placeholder="Select"
-                loading={personLoading}
-                onSearch={setSearchText}
-                filterOption={false}
-                options={
-                  personList
-                    ? personList?.map((person) => ({
-                        value: person.id,
-                        label: person.name,
-                      }))
-                    : []
-                }
-              />
-            </Form.Item> */}
           </div>
+          <Form.List name="credits">
+            {(fields, { add, remove }) => (
+              <>
+                {fields.map(({ key, name }) => (
+                  <CastAndCrew
+                    key={key}
+                    name={name}
+                    remove={() => remove(name)}
+                  />
+                ))}
+                <section className="mb-4">
+                  <Button onClick={() => add({ creditType: "CAST" })}>
+                    Add Cast
+                  </Button>
+                  <Button onClick={() => add({ creditType: "CREW" })}>
+                    Add Crew
+                  </Button>
+                </section>
+              </>
+            )}
+          </Form.List>
           <Form.Item className="mt-6">
             <Button
               type="primary"

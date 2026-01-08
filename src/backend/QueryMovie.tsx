@@ -74,6 +74,22 @@ export const QueryMovie = gql`
           id
           name
         }
+        castAndCrew{
+            id
+            name
+            creditType
+            department
+            job
+            character
+          
+            characterAdult
+            characterGender
+            order
+            department
+            createdAt
+            updatedAt
+            deletedAt
+        }
       }
     }
   }

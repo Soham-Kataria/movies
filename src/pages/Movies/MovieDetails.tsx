@@ -9,17 +9,16 @@ import {
   Spin,
   Alert,
   Carousel,
+  Table,
 } from "antd";
 import { ArrowLeftOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
 import { useQuery } from "@apollo/client/react";
-import { MovieCredits, QueryMovie } from "../../backend/QueryMovie";
-import type {
-  CreditsResponse,
-  MovieQueryResponse,
-} from "../../constants/types";
+import { QueryMovie } from "../../backend/QueryMovie";
+import type { CastAndCrew, MovieQueryResponse } from "../../constants/types";
 import DeleteMovie from "../../components/Movies/DeleteMovie";
 import Breadcrumbs from "../../components/BreadCrumbs";
+import type { ColumnsType } from "antd/es/table";
 
 const { Title, Text, Paragraph, Link } = Typography;
 
@@ -32,14 +31,36 @@ const MovieDetails = () => {
     skip: !id,
   });
 
-  const { data: credits } = useQuery<CreditsResponse>(MovieCredits, {
-    variables: {
-      id,
-    },
-  });
+  console.log(data?.movie.data.castAndCrew?.map((c)=>c));
 
-  // console.log(credits?.listMovieCredits.data.person.id);
-  console.log(credits?.listMovieCredits.data);
+  const columns: ColumnsType<CastAndCrew> = [
+    {
+      title: "Name",
+      dataIndex: "name",
+      key: "name",
+      render: (value) => value ?? "—",
+    },
+    {
+      title: "Credit Type",
+      dataIndex: "creditType",
+      key: "creditType",
+      render: (value) => value ?? "—",
+    },
+    {
+      title: "Character / Job",
+      key: "role",
+      render: (_, record) =>
+        record.creditType === "CAST"
+          ? record.character ?? "—"
+          : record.job ?? "—",
+    },
+    {
+      title: "Character Gender",
+      dataIndex: "characterGender",
+      key: "characterGender",
+      render: (value) => value ?? "—",
+    },
+  ];
 
   if (loading) {
     return (
@@ -68,7 +89,7 @@ const MovieDetails = () => {
         <Breadcrumbs
           items={[
             { title: "Home", path: "/" },
-            { title: "Movie List", path: "/movie-list" },
+            { title: "Movies", path: "/movie-list" },
             {
               title: `${movie.title || "Movie"} Details`,
               path: `/movies/${id}`,
@@ -249,14 +270,18 @@ const MovieDetails = () => {
               : "N/A"}
           </Text>
 
-          <div className="md:col-span-2">
-            <Descriptions
-              bordered
-              size="small"
-              column={1}
-              styles={{ label: { fontWeight: 600 } }}
-            ></Descriptions>
-          </div>
+          <Divider />
+
+          <Text>
+              Cast & Crew
+          </Text>
+
+          <Table // style={{border:"1px solid black"}}
+            columns={columns}
+            rowKey="id"
+            dataSource={movie.castAndCrew}
+            pagination={false}
+          />
         </Card>
       </section>
     </>
